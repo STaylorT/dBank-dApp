@@ -47,16 +47,26 @@ class App extends Component {
   }
   }
 
+  // connect to deposit smart contract with user input
   async deposit(amount) {
-    //check if this.state.dbank is ok
-      //in try block call dBank deposit();
-      alert(amount)
+    if (this.state.dbank !=='undefined'){ // make sure dbank is working contract
+      try{ // error handle call to smart contract function
+        await this.state.dbank.methods.deposit().send({value: amount.toString(), from:this.state.account})
+      } catch (e){
+          console.log('Error, deposit: ', e)
+      }
+    }
   }
 
   async withdraw(e) {
-    //prevent button from default click
-    //check if this.state.dbank is ok
-    //in try block call dBank withdraw();
+    e.preventDefault()
+    if (this.state.dbank!=='undefined'){
+      try{
+        await this.state.dbank.methods.withdraw().send({from: this.state.account})
+      } catch(e){
+        console.log('Error, withdraw: ', e)
+      }
+    }
   }
 
   constructor(props) {
@@ -130,6 +140,11 @@ class App extends Component {
                 <Tab eventKey="withdraw" title="Withdraw">
                   <div>
                     Do you want to withdrawal your principal + interest?
+                    <br />
+                    <br />
+                  </div>
+                  <div>
+                  <button type='submit' className='btn btn-primary' onClick={(e) => this.withdraw(e)}>Withdraw</button>
                   </div>
                 </Tab>
               </Tabs>
